@@ -113,7 +113,19 @@ body::after {
   position: relative; z-index: 1;
 }
 
-/* mobile fallback */
+.left-links {
+  margin-top: 28px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+}
+.left-links a {
+  font-family:'Cinzel',serif; font-size:clamp(9px,1.2vw,11px);
+  letter-spacing:.2em; text-transform:uppercase;
+  color: var(--gold); text-decoration:none;
+  transition: color .2s;
+}
+.left-links a:hover { color: #fff; }
+.links-divider { color:var(--muted); font-size:10px; }
 @media(max-width:700px){
   .main-layout {
     grid-template-columns: 1fr;
@@ -339,24 +351,26 @@ body::after {
 .book-info { padding:14px 14px 16px; }
 .book-title {
   font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:600;
-  color:var(--text); line-height:1.2; margin-bottom:5px;
+  color:#ffffff; line-height:1.2; margin-bottom:5px;
 }
-.book-genre { font-size:11.5px; font-style:italic; color:#b8aec0; line-height:1.5; margin-bottom:10px; }
+.book-genre { font-size:11.5px; font-style:italic; color:#ffffff; line-height:1.5; margin-bottom:10px; }
 .book-pills { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px; }
 .pill {
   font-family:'Cinzel',serif; font-size:8px; letter-spacing:.08em;
-  text-transform:uppercase; padding:3px 7px; border-radius:20px; border:1px solid;
+  text-transform:uppercase; padding:3px 7px; border-radius:20px; border:1.5px solid;
+  background: transparent;
 }
-.pill-pair { border-color:rgba(200,163,82,.5); color:#d4aa55; }
-.pill-heat { border-color:rgba(220,80,100,.55); color:#e0607a; }
+.pill-pair { border-color:#f0c85a; color:#ffffff; }
+.pill-heat { border-color:#ff7a8a; color:#ffffff; }
 .book-btn {
   display:block; text-align:center; padding:8px 10px;
-  background:rgba(124,26,42,0.1); border:1px solid rgba(124,26,42,0.28);
+  background: transparent;
+  border:1px solid #c8a352;
   border-radius:3px; font-family:'Cinzel',serif; font-size:8.5px;
-  letter-spacing:.18em; text-transform:uppercase; color:var(--gold);
-  text-decoration:none; transition:background .2s, border-color .2s;
+  letter-spacing:.18em; text-transform:uppercase; color:#ffffff;
+  text-decoration:none; transition:background .2s, color .2s;
 }
-.book-btn:hover { background:rgba(124,26,42,.28); border-color:var(--gold); }
+.book-btn:hover { background:rgba(200,163,82,0.15); color:#c8a352; }
 
 footer {
   text-align:center; padding:48px 24px;
@@ -394,6 +408,11 @@ footer a { color:var(--gold); text-decoration:none; }
       <p class="instr-text">drag to spin</p>
       <p class="instr-text">click the center to explore</p>
     </div>
+    <div class="left-links">
+      <a href="https://tipofslater.com" target="_blank" rel="noopener">Full Catalog: tipofslater.com</a>
+      <span class="links-divider">✦</span>
+      <a href="https://welcometothemadness.com" target="_blank" rel="noopener">signed copies: welcometothemadness.com</a>
+    </div>
   </div>
 
   <!-- RIGHT: DIAL -->
@@ -430,7 +449,7 @@ footer a { color:var(--gold); text-decoration:none; }
   </div>
 </div>
 
-<footer>✦ &nbsp; <a href="https://tipofslater.com" target="_blank" rel="noopener">tipofslater.com</a> &nbsp; ✦</footer>
+<footer>✦ &nbsp; Slaterverse &nbsp; ✦</footer>
 
 <script>
 // ── BOOK DATA ────────────────────────────────────────────────────────────────
