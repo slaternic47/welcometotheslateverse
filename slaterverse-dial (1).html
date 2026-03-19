@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I want to~ | Slaterverse</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600;1,700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #06050a;
+  --text:      #e8ddd0;
+  --muted:     #6b6070;
+  --gold:      #c8a352;
+  --gold-dim:  rgba(200,163,82,0.18);
+  --gold-rim:  rgba(200,163,82,0.28);
+  --red:       #7c1a2a;
+  --red-vivid: #b03050;
+  --red-glow:  rgba(124,26,42,0.3);
+  --card:      #0f0d14;
+  --modal-bg:  rgba(4,3,8,0.95);
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9998; mix-blend-mode:overlay;
+}
+
+/* ── MAIN LAYOUT ── */
+.main-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 60px 0 80px;
+  position: relative; overflow: hidden;
+}
+.main-layout::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse 70% 70% at 70% 50%, rgba(124,26,42,0.16) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+/* ── LEFT: INSTRUCTIONS ── */
+.left-col {
+  padding: 0 40px 0 clamp(32px, 6vw, 100px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  gap: 0;
+  animation: fadeUp .9s ease .2s both;
+  position: relative; z-index: 1;
+}
+
+.hero-label {
+  font-family:'Cinzel',serif;
+  font-size: clamp(11px, 1.4vw, 16px);
+  letter-spacing:.35em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:10px;
+}
+
+.hero-tagline {
+  font-family:'Cormorant Garamond',serif;
+  font-size: clamp(13px, 1.5vw, 17px);
+  font-style:italic; font-weight:300;
+  color:#a89faa; line-height:1.6;
+  margin-bottom:32px;
+  max-width:380px;
+}
+
+.hero-title {
+  font-family:'Cinzel',serif;
+  font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+  font-weight:700; line-height:1; letter-spacing:.1em;
+  text-transform:uppercase; white-space:nowrap;
+  color:var(--text); text-shadow: 0 0 80px rgba(124,26,42,0.4);
+  margin-bottom: 20px;
+}
+.hero-title .tilde { color:var(--red-vivid); }
+
+.divider-line {
+  width: 48px; height: 1px;
+  background: var(--gold-rim);
+  margin-bottom: 28px;
+}
+
+.instructions {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.instr-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
+  font-style:italic; font-weight:400;
+  color:#c8c0d0; line-height:1.3;
+  letter-spacing:.04em;
+}
+
+/* ── DIAL SECTION (right col) ── */
+.dial-section {
+  padding: 20px 0 20px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+  position: relative; z-index: 1;
+}
+
+/* mobile fallback */
+@media(max-width:700px){
+  .main-layout {
+    grid-template-columns: 1fr;
+    padding: 60px 0 40px;
+  }
+  .left-col {
+    padding: 0 24px;
+    align-items: center; text-align: center;
+    margin-bottom: 32px;
+  }
+  .instr-item { justify-content: center; }
+  .divider-line { margin-left: auto; margin-right: auto; }
+}
+
+/* ── DIAL ── */
+.dial-wrap {
+  position: relative;
+  width: min(520px, 92vw);
+  height: min(520px, 92vw);
+  cursor: grab;
+  touch-action: none;
+  animation: fadeUp 1s ease 1s both;
+}
+.dial-wrap:active { cursor: grabbing; }
+
+/* Decorative visual rings (CSS only, no interaction) */
+.dial-visual {
+  position: absolute; inset: 0;
+  border-radius: 50%; pointer-events: none;
+}
+/* outermost ring */
+.dial-visual::before {
+  content:'';
+  position:absolute; inset:0; border-radius:50%;
+  border:1px solid var(--gold-rim);
+  box-shadow:
+    inset 0 0 60px rgba(124,26,42,0.12),
+    0 0 40px rgba(0,0,0,.6),
+    0 0 120px rgba(124,26,42,0.08);
+}
+/* inner glowing core */
+.dial-visual::after {
+  content:'';
+  position:absolute;
+  inset:18%;
+  border-radius:50%;
+  border:1px solid var(--gold-dim);
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(124,26,42,0.22) 0%,
+    rgba(12,10,18,0.9) 55%,
+    rgba(6,5,10,1) 100%);
+  box-shadow: inset 0 0 40px rgba(124,26,42,0.2), 0 0 0 1px rgba(200,163,82,0.06);
+}
+
+/* second ring */
+.dial-ring2 {
+  position:absolute; inset:8%; border-radius:50%;
+  border:1px solid rgba(200,163,82,0.1);
+  pointer-events:none;
+}
+
+/* pointer at top */
+.dial-pointer {
+  position:absolute; top:calc(8% - 1px); left:50%;
+  transform:translateX(-50%);
+  pointer-events:none; z-index:10;
+}
+.dial-pointer::before {
+  content:'';
+  display:block;
+  width:0; height:0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 9px solid var(--gold);
+  filter: drop-shadow(0 0 4px var(--gold));
+}
+
+/* labels layer */
+.dial-labels {
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+.mood-label {
+  position:absolute;
+  top:0; left:0;
+  font-family:'Cinzel',serif;
+  font-size:clamp(7.5px, 1.4vw, 10px);
+  letter-spacing:.12em; text-transform:uppercase;
+  color:#ddd5e8; white-space:nowrap;
+  transform-origin:center center;
+  transition: color .25s, font-size .25s, text-shadow .25s;
+  pointer-events:auto; cursor:pointer;
+}
+.mood-label.selected {
+  color: #f0c85a;
+  text-shadow: 0 0 16px rgba(240,200,90,0.8), 0 0 4px rgba(240,200,90,0.5);
+  font-size: clamp(9px, 1.7vw, 12px);
+}
+
+/* center click area */
+.dial-center {
+  position:absolute;
+  inset:22%; border-radius:50%;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center;
+  z-index:5; cursor:pointer;
+  transition: transform .2s ease;
+  padding: 12px;
+}
+.dial-center:hover { transform: scale(1.04); }
+.dial-center:hover .dc-hint { opacity:1; }
+
+.dc-prefix {
+  font-family:'Cinzel',serif;
+  font-size:clamp(9px,1.6vw,13px);
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:12px;
+}
+.dc-mood {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem, 6vw, 4rem);
+  font-style:italic; font-weight:400;
+  color:var(--text); line-height:1.1;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.dc-mood.changing { opacity:0; transform:translateY(6px); }
+.dc-hint {
+  margin-top:14px;
+  font-family:'Cinzel',serif;
+  font-size:clamp(8px,1.2vw,11px);
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); opacity:.6;
+  transition: opacity .3s;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+/* tick marks layer */
+.dial-ticks {
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+.tick-mark {
+  position:absolute;
+  top:0; left:0;
+  transform-origin:0 0;
+  width:1px;
+  background:var(--gold);
+  opacity:.25;
+  transition:opacity .25s, height .25s;
+}
+.tick-mark.selected { opacity:.7; }
+
+/* ── POPUP ── */
+.overlay {
+  position:fixed; inset:0;
+  background:var(--modal-bg);
+  backdrop-filter:blur(10px);
+  z-index:1000;
+  display:flex; align-items:flex-start; justify-content:center;
+  padding:40px 20px 60px; overflow-y:auto;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  width:min(880px,100%); margin:auto;
+  background:var(--card);
+  border:1px solid var(--gold-rim); border-radius:6px;
+  overflow:hidden;
+  transform:translateY(28px) scale(.98);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 48px 120px rgba(0,0,0,.7);
+}
+.overlay.open .modal { transform:translateY(0) scale(1); }
+.modal-head {
+  padding:36px 40px 28px;
+  border-bottom:1px solid var(--gold-rim);
+  display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+  background:linear-gradient(135deg, rgba(124,26,42,0.12) 0%, transparent 55%);
+}
+.modal-eyebrow {
+  font-family:'Cinzel',serif; font-size:10px; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--gold); margin-bottom:8px;
+}
+.modal-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,5vw,3.5rem); font-weight:300; font-style:italic;
+  color:var(--text); line-height:1;
+}
+.modal-title em { color:var(--gold); }
+.modal-close {
+  background:none; border:1px solid var(--gold-rim); color:var(--muted);
+  width:36px; height:36px; border-radius:50%; font-size:13px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color .2s, color .2s; flex-shrink:0;
+  font-family:sans-serif;
+}
+.modal-close:hover { border-color:var(--gold); color:var(--gold); }
+.modal-body { padding:32px 40px 44px; }
+.books-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+  gap:20px;
+}
+.book-card {
+  display:block; background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.05); border-radius:4px;
+  overflow:hidden; text-decoration:none; color:inherit;
+  transition:transform .25s, border-color .25s, box-shadow .25s;
+}
+.book-card:hover {
+  transform:translateY(-5px); border-color:var(--gold-rim);
+  box-shadow:0 16px 48px rgba(0,0,0,.55);
+}
+.book-cover-wrap {
+  width:100%; aspect-ratio:2/3; background:#12101a; overflow:hidden;
+}
+.book-cover {
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .4s;
+}
+.book-card:hover .book-cover { transform:scale(1.04); }
+.book-info { padding:14px 14px 16px; }
+.book-title {
+  font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:600;
+  color:var(--text); line-height:1.2; margin-bottom:5px;
+}
+.book-genre { font-size:11.5px; font-style:italic; color:#b8aec0; line-height:1.5; margin-bottom:10px; }
+.book-pills { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:12px; }
+.pill {
+  font-family:'Cinzel',serif; font-size:8px; letter-spacing:.08em;
+  text-transform:uppercase; padding:3px 7px; border-radius:20px; border:1px solid;
+}
+.pill-pair { border-color:rgba(200,163,82,.5); color:#d4aa55; }
+.pill-heat { border-color:rgba(220,80,100,.55); color:#e0607a; }
+.book-btn {
+  display:block; text-align:center; padding:8px 10px;
+  background:rgba(124,26,42,0.1); border:1px solid rgba(124,26,42,0.28);
+  border-radius:3px; font-family:'Cinzel',serif; font-size:8.5px;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--gold);
+  text-decoration:none; transition:background .2s, border-color .2s;
+}
+.book-btn:hover { background:rgba(124,26,42,.28); border-color:var(--gold); }
+
+footer {
+  text-align:center; padding:48px 24px;
+  border-top:1px solid rgba(200,163,82,0.08);
+  font-family:'Cinzel',serif; font-size:10px; letter-spacing:.3em;
+  color:var(--muted); text-transform:uppercase;
+}
+footer a { color:var(--gold); text-decoration:none; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pulse {
+  0%,100% { opacity:.5; } 50% { opacity:1; }
+}
+
+@media(max-width:640px){
+  .modal-head,.modal-body { padding-left:20px; padding-right:20px; }
+  .books-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="main-layout">
+
+  <!-- LEFT: INSTRUCTIONS -->
+  <div class="left-col">
+    <p class="hero-label">Welcome to the Slaterverse</p>
+    <p class="hero-tagline">Not sure where to start? You're in the right place to find your next read.</p>
+    <h1 class="hero-title"><span class="tilde">~</span>&nbsp;I WANT TO&nbsp;<span class="tilde">~</span></h1>
+    <div class="instructions">
+      <p class="instr-text">drag to spin</p>
+      <p class="instr-text">click the center to explore</p>
+    </div>
+  </div>
+
+  <!-- RIGHT: DIAL -->
+  <section class="dial-section">
+    <div class="dial-wrap" id="dialWrap">
+      <div class="dial-visual"></div>
+      <div class="dial-ring2"></div>
+      <div class="dial-ticks" id="dialTicks"></div>
+      <div class="dial-labels" id="dialLabels"></div>
+      <div class="dial-pointer"></div>
+      <div class="dial-center" id="dialCenter" role="button" tabindex="0" aria-label="Open recommendations">
+        <p class="dc-prefix">I want to~</p>
+        <p class="dc-mood" id="dcMood">hurt</p>
+        <p class="dc-hint">tap to explore &rarr;</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- POPUP -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-eyebrow">I want to~</div>
+        <h2 class="modal-title" id="modalTitle"></h2>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="books-grid" id="booksGrid"></div>
+    </div>
+  </div>
+</div>
+
+<footer>✦ &nbsp; <a href="https://tipofslater.com" target="_blank" rel="noopener">tipofslater.com</a> &nbsp; ✦</footer>
+
+<script>
+// ── BOOK DATA ────────────────────────────────────────────────────────────────
+const BOOKS = [
+  { title:"A Promise of Forever",   cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/valla_2.png",                                                                           link:"https://books2read.com/u/mek9rY",        genre:"Vallaverse · Mpreg",                              heat:"Medium",         pairing:"MM",      moods:["hurt"] },
+  { title:"Accidentally Forever",   cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/accidentally_forever_character_cover.jpg",                                             link:"https://books2read.com/u/mYkVdp",        genre:"Betaverse · Beta × Omega Bounded",                heat:"Medium",         pairing:"MMFFMM",  moods:["find a found family"] },
+  { title:"Always Yours Series",    cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/always_yours_series_luca_4.jpg",                                                        link:"https://books2read.com/u/bzydWG",        genre:"Omegaverse · Mpreg · Two Omega Pack",             heat:"Medium",         pairing:"MMMMM",   moods:["hurt"] },
+  { title:"Betas Unhinged",         cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/betas_unhinged_6_c1a91f80-2d00-4226-b4a0-cfdfcbf31d2f.png",                           link:"https://books2read.com/u/bPjejY",        genre:"Betaverse · Serial Killers in Love",              heat:"Medium",         pairing:"MM",      moods:["fall for a villain","feel something dark"] },
+  { title:"Blood and Surrender",    cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/02/blood-surrender.jpg",                                                                   link:"https://books2read.com/u/bOKJWK",        genre:"Shifter Omegaverse · Wolf × Vampire",             heat:"High",           pairing:"MM",      moods:["surrender"] },
+  { title:"Corrupt Me",             cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/perfectly_4.jpg",                                                                       link:"https://books2read.com/u/4N5QZ9",        genre:"Omegaverse · Good Girl Gone Kinky",               heat:"Medium to High", pairing:"MMMF",    moods:["find a found family","feel tempted"] },
+  { title:"Sinful Surrender Omnibus",cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/sinful_surrender_spec.jpg",                                                           link:"https://books2read.com/u/meLL2r",        genre:"Dark Contemporary · Single Fathers",              heat:"Low to Medium",  pairing:"MMMM",    moods:["hurt"] },
+  { title:"Feral",                  cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/feralppb.jpg",                                                                          link:"https://books2read.com/u/mBNWoO",        genre:"Dark Shifter Omegaverse · Mpreg",                 heat:"Medium to High", pairing:"MMMMM",   moods:["hurt","spiral"] },
+  { title:"Fire and Fate",          cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/wild_court_reg.jpg",                                                                    link:"https://books2read.com/u/3nxL59",        genre:"Shifter Omegaverse · Dragons × Wolves × Royalty", heat:"Medium",        pairing:"FFFF",    moods:["go on an adventure"] },
+  { title:"Glitch of the Heart",    cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/02/a-piece-of-forever-small-town-romances.jpg",                                            link:"https://books2read.com/u/3kzyW6",        genre:"Contemporary · Ex's Brother",                     heat:"Medium",         pairing:"MF",      moods:["take charge","feel something forbidden"] },
+  { title:"Mocha Kisses",           cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/mochakisses.jpg",                                                                       link:"https://books2read.com/u/bx6kQe",        genre:"Contemporary · Biawakening",                      heat:"Medium",         pairing:"MMFM",    moods:["find a found family"] },
+  { title:"No Rest for the Wicked", cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2025/04/image.png",                                                                             link:"https://books2read.com/u/bMJeP7",        genre:"Dark Romance · FMC Serial Killer",                heat:"High",           pairing:"MMFM",    moods:["feel something dark","feel corrupted"] },
+  { title:"Passion Series",         cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/someonebesideme.jpg",                                                                   link:"https://books2read.com/u/bOjjrK",        genre:"Suspense · Contemporary",                         heat:"Low to Medium",  pairing:"MMFMM",   moods:["hurt","go on an adventure"] },
+  { title:"Perfectly Glazed",       cover:"https://cdn.shopify.com/s/files/1/0858/5763/2547/files/Perfectly_glazed.jpg?v=1746316212",                                                                     link:"https://books2read.com/u/mekMQ9",        genre:"Erotica",                                         heat:"High",           pairing:"MFM",     moods:["feel tempted","be weird"] },
+  { title:"Revelations Series",     cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2025/01/phoenix-2.jpg",                                                                         link:"https://books2read.com/u/mYDDgW",        genre:"Twisted Romance · Serial Killer · Cannibal",      heat:"Medium",         pairing:"MMMM",    moods:["feel corrupted","fall for a villain"] },
+  { title:"Risky Taste",            cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/risky_taste.jpg",                                                                       link:"https://books2read.com/u/38JDGa",        genre:"Military Romance",                                heat:"Low to Medium",  pairing:"MMMM",    moods:["hurt","cry","spiral"] },
+  { title:"Taboo Caresses",         cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/02/knot-unexpected-series-7.jpg",                                                          link:"https://books2read.com/u/4X1plL",        genre:"Omegaverse · Stepbrothers · Mpreg",               heat:"Medium to High", pairing:"MMM",     moods:["find a found family","feel something forbidden","surrender"] },
+  { title:"Trials of an Omega",     cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2024/10/revenge-1.jpg",                                                                         link:"https://books2read.com/u/3nGAeo",        genre:"Omegaverse · Shifters",                           heat:"Medium to High", pairing:"MMMMMFM", moods:["go on an adventure","find a found family"] },
+  { title:"Vows and Venom",         cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/02/viws.png",                                                                              link:"https://books2read.com/u/bwleNy",        genre:"Dark Romance · Twincest",                         heat:"Medium to High", pairing:"MM",      moods:["feel something forbidden","feel tempted","surrender"] },
+  { title:"Omega's Preference Duology", cover:"https://slateresqueinfinities.wordpress.com/wp-content/uploads/2026/01/omega_duology.jpg",                                                                link:"https://books2read.com/u/b5B9BO",        genre:"Omegaverse · Mpreg",                              heat:"Medium",         pairing:"MMMM",    moods:["surrender","find a found family"] },
+  { title:"Vicious Prey",           cover:"https://cdn.shopify.com/s/files/1/0858/5763/2547/files/infixtemptationcovers_4_0d3492e9-5f71-4c77-bce9-9d3a6554e50f.jpg?v=1772674132",                         link:"https://tinyurl.com/viciousprey",        genre:"Paranormal · Witch × Priest × Vampire",           heat:"Medium",         pairing:"MMMM",    moods:["surrender","find a found family","spiral"] }
+];
+
+const ALL_MOODS = ["hurt","cry","spiral","feel something dark","feel corrupted","fall for a villain","surrender","find a found family","feel tempted","feel something forbidden","go on an adventure","take charge","be weird"];
+const MOODS = ALL_MOODS.filter(m => BOOKS.some(b => b.moods.includes(m)));
+const N = MOODS.length;
+
+// ── DIAL STATE ───────────────────────────────────────────────────────────────
+let currentIndex = 0;
+let angleOffset  = 0; // accumulated rotation in degrees (ring rotates, labels orbit)
+let dragStartX   = 0;
+let dragStartAngle = 0;
+let isDragging   = false;
+let snapRAF      = null;
+
+const dialWrap   = document.getElementById('dialWrap');
+const dialLabels = document.getElementById('dialLabels');
+const dialTicks  = document.getElementById('dialTicks');
+const dcMood     = document.getElementById('dcMood');
+const dialCenter = document.getElementById('dialCenter');
+
+function getSize() { return dialWrap.getBoundingClientRect().width; }
+
+function degToRad(d) { return d * Math.PI / 180; }
+
+// Each mood sits at angle: baseAngle(i) = i * (360/N)
+// With rotation: effectiveAngle(i) = baseAngle(i) + angleOffset
+// Selected = mood whose effectiveAngle mod 360 is closest to 0 (top = 0°)
+function getSelectedIndex(offset) {
+  let best = 0, bestDist = Infinity;
+  for (let i = 0; i < N; i++) {
+    let a = (i * 360 / N + offset) % 360;
+    if (a < 0) a += 360;
+    if (a > 180) a -= 360; // signed distance from 0
+    const dist = Math.abs(a);
+    if (dist < bestDist) { bestDist = dist; best = i; }
+  }
+  return best;
+}
+
+function renderDial(offset) {
+  const size = getSize();
+  const cx = size / 2, cy = size / 2;
+  const rLabel = size * 0.455;
+  const rTickOuter = size * 0.405;
+  const rTickInner = size * 0.375;
+
+  const sel = getSelectedIndex(offset);
+
+  // Clear
+  dialLabels.innerHTML = '';
+  dialTicks.innerHTML  = '';
+
+  for (let i = 0; i < N; i++) {
+    const a = (i * 360 / N + offset);
+    const rad = degToRad(a);
+    const sin = Math.sin(rad), cos = Math.cos(rad);
+
+    // Label
+    const lx = cx + sin * rLabel;
+    const ly = cy - cos * rLabel;
+    const lbl = document.createElement('span');
+    lbl.className = 'mood-label' + (i === sel ? ' selected' : '');
+    lbl.textContent = MOODS[i];
+    lbl.dataset.index = i;
+    lbl.style.transform = `translate(calc(${lx}px - 50%), calc(${ly}px - 50%))`;
+    // Opacity fade: brighter when near top
+    const angleDist = Math.abs(((a % 360) + 360) % 360 <= 180 ? ((a % 360) + 360) % 360 : 360 - ((a % 360) + 360) % 360);
+    const opacity = i === sel ? 1 : Math.max(0.6, 1 - angleDist / 180 * 0.45);
+    lbl.style.opacity = opacity;
+    lbl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      snapToIndex(parseInt(lbl.dataset.index));
+    });
+    dialLabels.appendChild(lbl);
+
+    // Tick
+    const tx = cx + sin * rTickInner;
+    const ty = cy - cos * rTickInner;
+    const tickLen = i === sel ? (rTickOuter - rTickInner) * 1.4 : (rTickOuter - rTickInner);
+    const tick = document.createElement('div');
+    tick.className = 'tick-mark' + (i === sel ? ' selected' : '');
+    tick.style.cssText = `
+      width:${i === sel ? '2' : '1'}px;
+      height:${tickLen}px;
+      transform:translate(calc(${tx}px - 50%), calc(${ty}px - 50%)) rotate(${a}deg);
+      transform-origin:50% 0;
+    `;
+    dialTicks.appendChild(tick);
+  }
+
+  // Update center text with animation
+  if (sel !== currentIndex) {
+    dcMood.classList.add('changing');
+    setTimeout(() => {
+      dcMood.textContent = MOODS[sel];
+      dcMood.classList.remove('changing');
+    }, 180);
+    currentIndex = sel;
+  }
+}
+
+function snapToIndex(idx) {
+  // Find shortest rotation path to put idx at top (angle 0)
+  // Target offset so that idx * (360/N) + offset ≡ 0 (mod 360)
+  const target = -idx * 360 / N;
+  // Normalise current angleOffset to same range
+  let current = angleOffset;
+  // Find nearest equivalent of target
+  let diff = target - current;
+  // Normalise diff to [-180, 180]
+  diff = ((diff % 360) + 540) % 360 - 180;
+  const finalTarget = current + diff;
+
+  if (snapRAF) cancelAnimationFrame(snapRAF);
+  const start = performance.now();
+  const startAngle = current;
+  const duration = 420;
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function step(now) {
+    const t = Math.min(1, (now - start) / duration);
+    angleOffset = startAngle + (finalTarget - startAngle) * easeOut(t);
+    renderDial(angleOffset);
+    if (t < 1) snapRAF = requestAnimationFrame(step);
+    else { angleOffset = finalTarget; currentIndex = idx; }
+  }
+  snapRAF = requestAnimationFrame(step);
+}
+
+// ── DRAG HANDLERS ────────────────────────────────────────────────────────────
+function getClientX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+
+function onDragStart(e) {
+  if (e.target === dialCenter || dialCenter.contains(e.target)) return;
+  isDragging   = true;
+  dragStartX   = getClientX(e);
+  dragStartAngle = angleOffset;
+  if (snapRAF) cancelAnimationFrame(snapRAF);
+}
+
+function onDragMove(e) {
+  if (!isDragging) return;
+  e.preventDefault();
+  const dx = getClientX(e) - dragStartX;
+  const sensitivity = 0.45;
+  angleOffset = dragStartAngle + dx * sensitivity;
+  renderDial(angleOffset);
+}
+
+function onDragEnd() {
+  if (!isDragging) return;
+  isDragging = false;
+  const sel = getSelectedIndex(angleOffset);
+  snapToIndex(sel);
+}
+
+dialWrap.addEventListener('mousedown',  onDragStart);
+dialWrap.addEventListener('touchstart', onDragStart, { passive: true });
+window.addEventListener('mousemove',   onDragMove);
+window.addEventListener('touchmove',   onDragMove, { passive: false });
+window.addEventListener('mouseup',     onDragEnd);
+window.addEventListener('touchend',    onDragEnd);
+
+// Click center to open popup
+dialCenter.addEventListener('click', () => openPopup(MOODS[currentIndex]));
+dialCenter.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openPopup(MOODS[currentIndex]); }});
+
+// ── POPUP ────────────────────────────────────────────────────────────────────
+const overlay    = document.getElementById('overlay');
+const modalTitle = document.getElementById('modalTitle');
+const booksGrid  = document.getElementById('booksGrid');
+
+function openPopup(mood) {
+  const matches = BOOKS.filter(b => b.moods.includes(mood));
+  modalTitle.innerHTML = `<em>${mood}</em>`;
+  booksGrid.innerHTML = matches.map(b => `
+    <a class="book-card" href="${b.link}" target="_blank" rel="noopener noreferrer">
+      <div class="book-cover-wrap">
+        <img class="book-cover" src="${b.cover}" alt="${b.title}" loading="lazy" onerror="this.style.opacity='0'">
+      </div>
+      <div class="book-info">
+        <div class="book-title">${b.title}</div>
+        <div class="book-genre">${b.genre}</div>
+        <div class="book-pills">
+          <span class="pill pill-pair">${b.pairing}</span>
+          <span class="pill pill-heat">${b.heat} heat</span>
+        </div>
+        <div class="book-btn">Read Now &rarr;</div>
+      </div>
+    </a>
+  `).join('');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePopup() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closePopup);
+overlay.addEventListener('click', e => { if (e.target === overlay) closePopup(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') closePopup(); });
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+dcMood.textContent = MOODS[0];
+renderDial(0);
+window.addEventListener('resize', () => renderDial(angleOffset));
+</script>
+</body>
+</html>
